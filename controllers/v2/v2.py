@@ -1,6 +1,6 @@
 from controller import Robot, Motor
 import paho.mqtt.client as paho
-
+import json
 # create the Robot instance.
 robot = Robot()
 
@@ -30,13 +30,14 @@ def on_publish(client,userdata,result):             #create function for callbac
     pass
 
 def on_message(client, userdata, msg):
-    print("Received message '" + str(msg.payload) + "' on topic '" + msg.topic + "'")
+    move(msg.payload)
     pass
 client1= paho.Client("control1")                           #create client object
 client1.on_publish = on_publish                          #assign function to callback
 client1.connect(broker,port)                             #establish connection
 client1.subscribe("move")
 client1.on_message = on_message
+
 
 
 def bound(
@@ -81,6 +82,10 @@ def initLight():
 leftMotor, rightMotor = initMotor()
 light_sensors = initLight()
 
+def move(speed):
+    speed = json.loads(speed)
+    leftMotor.setVelocity(speed[0])
+    rightMotor.setVelocity(speed[1])
 
 def get_light_infos():
     max_light = 0
