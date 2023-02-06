@@ -50,3 +50,21 @@ braitengerg = [5.3,10] #Detection d'un obstacle
 light = [10,5]         #Detection de lumiere
 speed = [10,10]        #L'evitement de l'obstacle prend la priorité
 ```
+## Prérequis
+Avant de commencer à utiliser ce projet, veuillez vous assurer d'avoir installé les éléments suivants sur votre ordinateur :
+- Python 3
+- Mosquitto (Broker MQTT)
+- Paho (Client MQTT pour Python)
+
+## Installation de Paho
+Pour installer Paho, utilisez la commande suivante :
+
+```
+pip install paho-mqtt
+```
+
+## Lancer le broker Mosquitto
+
+```
+mosquitto -p 1880
+```
