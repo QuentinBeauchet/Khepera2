@@ -23,6 +23,8 @@ def on_connect(client, userdata, flags, rc):
     # reconnect then subscriptions will be renewed.
     client.subscribe("sensors/light", qos=2)
     client.subscribe("sensors/dist", qos=2)
+    client.subscribe("res/light", qos=2)
+    client.subscribe("res/dist", qos=2)
 
 
 # The callback for when a PUBLISH message is received from the server.
@@ -31,6 +33,9 @@ def on_message(client, userdata, msg):
         client1.publish("algo/light",msg.payload)                   #publish
     elif (msg.topic == "sensors/dist"):
         client1.publish("algo/dist",msg.payload)                    #publish
+    elif (msg.topic == "res/light" or "res/dist" ):
+        # à insérer le code ici 
+        client1.publish("move",msg.payload)
 
 client = mqtt.Client()
 client.on_connect = on_connect
