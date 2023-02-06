@@ -75,4 +75,4 @@ mosquitto -p 1880
 
 On peut voir ci dessous le schéma de notre architecture, avec les différents topics par lequel passe nos données ainsi qu'un exemple de la donnée type qui va passer dedans. Il n'y a pas de différence entre les flèches bleues et rouges, à part que les rouges sont des messages issus de calculs et transporte l'information de la puissance à passer dans les roues. Alors que les flèches bleues signifient que l'on apporte les données brutes venant des capteurs. 
 
-![alt text](https://github.com/Yann-Forner/tp4_webots/blob/main/schema.png?raw=true)
+![alt text](https://github.com/Yann-Forner/tp4_webots/blob/main/archi.png?raw=true)
