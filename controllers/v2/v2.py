@@ -25,17 +25,21 @@ MATRIX = [
 broker="localhost"
 port=1880
 
+speed = [0.0, 0.0]
+
 def on_publish(client,userdata,result):             #create function for callback
     #print("data published \n")
     pass
 
 def on_message(client, userdata, msg):
-    move(msg.payload)
+    global speed
+    speed = json.loads(msg.payload)
     pass
+
 client= paho.Client("control1")                           #create client object
 client.on_publish = on_publish                          #assign function to callback
 client.connect(broker,port)                             #establish connection
-client.subscribe("move")
+client.subscribe("move", qos=0)
 client.on_message = on_message
 
 
@@ -82,32 +86,19 @@ def initLight():
 leftMotor, rightMotor = initMotor()
 light_sensors = initLight()
 
-def move(speed):
-    speed = json.loads(speed)
+def move():
     leftMotor.setVelocity(speed[0])
     rightMotor.setVelocity(speed[1])
-
-def get_light_infos():
-    max_light = 0
-    max_index = 0
-    s = 0
-    for i in range(len(light_sensors)):
-        value = light_sensors[i].getValue()
-        s += value
-        if value > max_light:
-            max_light = value
-            max_index = i
-    return (max_light, max_index, s)
-
 
 def publish_sensors():
     sensors_dist = [x.getValue() for x in initBraitengerg()]
     sensors_light = [x.getValue() for x in light_sensors]
-    client.publish("sensors/light",str(sensors_light))                   #publish
-    client.publish("sensors/dist",str(sensors_dist))                                #publish
+    client.publish("sensors",str([sensors_light, sensors_dist]))                          #publish
 
 
 
 while robot.step(TIME_STEP) != -1:
-    client.loop()
     publish_sensors()
+    client.loop()
+    move()
+
