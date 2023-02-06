@@ -19,29 +19,15 @@ def coordination(dist, light):
 
 def init_last_speed(client):
     for i in service_list:
-        last_speed["res/" + i] = []
+        last_speed["res/" + i] = [0, 0]
         client.subscribe("res/" + i, qos=0)
-
-
-def is_someone_empty():
-    for i in service_list:
-        if last_speed["res/" + i] == []:
-            return True
-    return False
-
-
-def free_last_speed():
-    for i in service_list:
-        last_speed["res/" + i] = []
 
 
 # Take the last value of each algorithm and process the coordination
 def coordination_controller(client, topic, speed):
     last_speed[topic] = speed
-    if not is_someone_empty():
-        res = str(coordination(last_speed["res/dist"], last_speed["res/light"]))
-        client.publish("move", res)
-        free_last_speed()
+    print("MOVE")
+    client.publish("move", str(coordination(last_speed["res/dist"], last_speed["res/light"])))
 
 
 # The callback for when the client receives a CONNACK response from the server.
@@ -64,17 +50,17 @@ def on_message(client, userdata, msg):
     elif "res/" in msg.topic:
         speed_array = json.loads(msg.payload)
         coordination_controller(client, msg.topic, speed_array)
-        # print(msg.topic + "  : -> " + str(msg.payload) )
 
 
-client = mqtt.Client()
-client.on_connect = on_connect
-client.on_message = on_message
+def initMQTT():
+    client = mqtt.Client("control1")
+    client.on_connect = on_connect
+    client.on_message = on_message
 
-client.connect("localhost", 1880, 60)
+    client.connect("localhost", 1880, 60)
 
-# Blocking call that processes network traffic, dispatches callbacks and
-# handles reconnecting.
-# Other loop*() functions are available that give a threaded interface and a
-# manual interface.
-client.loop_forever()
+    client.loop_forever()
+
+
+if __name__ == "__main__":
+    initMQTT()

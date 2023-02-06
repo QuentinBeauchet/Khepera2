@@ -53,7 +53,7 @@ def braitengerg(sensors_values):
     return speed
 
 
-client.connect("192.168.0.135", 1880, 60)
+client.connect("localhost", 1880, 60)
 
 # Blocking call that processes network traffic, dispatches callbacks and
 # handles reconnecting.

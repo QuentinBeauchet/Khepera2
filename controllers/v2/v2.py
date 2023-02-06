@@ -1,55 +1,23 @@
-from controller import Robot, Motor
+from controller import Robot
 import paho.mqtt.client as paho
 import json
+
 # create the Robot instance.
 robot = Robot()
 
 TIME_STEP = int(robot.getBasicTimeStep())
-MAX_SPEED = 10
-SPEED_UNIT = 0.00053429
 NUM_SENSORS = 8
-DISTANCE_RANGE = 2000
 
-MATRIX = [
-    [-5000, -5000],
-    [-20000, 40000],
-    [-30000, 50000],
-    [-70000, 70000],
-    [70000, -60000],
-    [50000, -40000],
-    [40000, -20000],
-    [-5000, -5000],
-    [-10000, -10000],
-]
 
-broker="localhost"
-port=1880
+BROKER = "localhost"
+PORT = 1880
 
-speed = [0.0, 0.0]
-
-def on_publish(client,userdata,result):             #create function for callback
-    #print("data published \n")
-    pass
 
 def on_message(client, userdata, msg):
     global speed
+    print("MSG=", msg)
     speed = json.loads(msg.payload)
     pass
-
-client= paho.Client("control1")                           #create client object
-client.on_publish = on_publish                          #assign function to callback
-client.connect(broker,port)                             #establish connection
-client.subscribe("move", qos=0)
-client.on_message = on_message
-
-
-
-def bound(
-    x,
-    a,
-    b,
-):
-    return a if x < a else (b if x > b else x)
 
 
 def initMotor():
@@ -83,22 +51,36 @@ def initLight():
     return sensors
 
 
-leftMotor, rightMotor = initMotor()
-light_sensors = initLight()
+def initMQTT():
+    client = paho.Client("control1")  # create client object
+    client.connect(BROKER, PORT)  # establish connection
+    client.subscribe("move", qos=0)
+    client.on_message = on_message
+    return client
+
 
 def move():
+    print(speed)
     leftMotor.setVelocity(speed[0])
     rightMotor.setVelocity(speed[1])
 
+
 def publish_sensors():
-    sensors_dist = [x.getValue() for x in initBraitengerg()]
-    sensors_light = [x.getValue() for x in light_sensors]
-    client.publish("sensors",str([sensors_light, sensors_dist]))                          #publish
+    dist = [x.getValue() for x in dist_sensors]
+    light = [x.getValue() for x in light_sensors]
+    print([light, dist])
+    client.publish("sensors", str([light, dist]))  # publish
 
 
+if __name__ == "__main__":
+    client = initMQTT()
 
-while robot.step(TIME_STEP) != -1:
-    publish_sensors()
-    client.loop()
-    move()
+    speed = [0.0, 0.0]
+    leftMotor, rightMotor = initMotor()
+    light_sensors = initLight()
+    dist_sensors = initBraitengerg()
 
+    while robot.step(TIME_STEP) != -1:
+        publish_sensors()
+        client.loop()
+        move()
