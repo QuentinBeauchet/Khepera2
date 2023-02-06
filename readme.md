@@ -68,3 +68,7 @@ pip install paho-mqtt
 ```
 mosquitto -p 1880
 ```
+
+## SCHEMA 
+
+![alt text](https://github.com/Yann-Forner/tp4_webots/blob/main/schema.png?raw=true)
