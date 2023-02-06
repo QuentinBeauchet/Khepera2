@@ -4,16 +4,9 @@
 
 ## Prérequis
 
-### En local
-
 - Python 3
 - Mosquitto (Broker MQTT)
-- Paho (Client MQTT pour Python)
-
-### Avec docker
-
-- Mosquitto (Broker MQTT)
-- Docker
+- Paho (Client MQTT pour Python) `pip install paho-mqtt`
 
 ## V1
 
