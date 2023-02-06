@@ -1,4 +1,11 @@
-'''MAX_SPEED = 10
+'''
+
+if __name__ == "__main__":
+    print(coordination([100], [50]))
+'''
+import paho.mqtt.client as mqtt
+
+MAX_SPEED = 10
 
 # Determine the correct speed for each motor based on the results of the other algorithms
 def coordination(dist, light):
@@ -9,11 +16,6 @@ def coordination(dist, light):
 
     return [x * weights[0] + y * weights[1] for x, y in zip(dist, light)]
 
-
-if __name__ == "__main__":
-    print(coordination([100], [50]))
-'''
-import paho.mqtt.client as mqtt
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
@@ -30,12 +32,13 @@ def on_connect(client, userdata, flags, rc):
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
     if (msg.topic == "sensors/light"):
-        client1.publish("algo/light",msg.payload)                   #publish
+        client.publish("algo/light",msg.payload)                   #publish
     elif (msg.topic == "sensors/dist"):
-        client1.publish("algo/dist",msg.payload)                    #publish
+        client.publish("algo/dist",msg.payload)                    #publish
     elif (msg.topic == "res/light" or "res/dist" ):
         # à insérer le code ici 
-        client1.publish("move",msg.payload)
+        #print(msg.topic + "  : -> " + str(msg.payload) )
+        client.publish("move",msg.payload)
 
 client = mqtt.Client()
 client.on_connect = on_connect

@@ -32,11 +32,11 @@ def on_publish(client,userdata,result):             #create function for callbac
 def on_message(client, userdata, msg):
     move(msg.payload)
     pass
-client1= paho.Client("control1")                           #create client object
-client1.on_publish = on_publish                          #assign function to callback
-client1.connect(broker,port)                             #establish connection
-client1.subscribe("move")
-client1.on_message = on_message
+client= paho.Client("control1")                           #create client object
+client.on_publish = on_publish                          #assign function to callback
+client.connect(broker,port)                             #establish connection
+client.subscribe("move")
+client.on_message = on_message
 
 
 
@@ -100,27 +100,20 @@ def get_light_infos():
     return (max_light, max_index, s)
 
 
-def get_light_infos():
-    max_light = 0
-    max_index = 0
-    s = 0
+def get_light_values():
+    sensors_values = []
     for i in range(len(light_sensors)):
-        value = light_sensors[i].getValue()
-        s += value
-        if value > max_light:
-            max_light = value
-            max_index = i
-    return (max_light, max_index, s)
+        sensors_values.append(light_sensors[i].getValue())
+    return sensors_values
 
 
 def publish_sensors():
     sensors_dist = [x.getValue() for x in initBraitengerg()]
-    max_light, max_index, s = get_light_infos()
-    client1.publish("sensors/light",str([max_light,max_index,s]))                   #publish
-    client1.publish("sensors/dist",str(sensors_dist))                                #publish
+    client.publish("sensors/light",str(get_light_values()))                   #publish
+    client.publish("sensors/dist",str(sensors_dist))                                #publish
 
 
 
 while robot.step(TIME_STEP) != -1:
-    client1.loop()
+    client.loop()
     publish_sensors()
