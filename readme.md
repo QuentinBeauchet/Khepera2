@@ -1,25 +1,6 @@
+### BEAUCHET Quentin - FORNER YANN - Groupe 1
+
 # Installation
-
-## Prérequis
-
-Avant de commencer à utiliser ce projet, veuillez vous assurer d'avoir installé les éléments suivants sur votre ordinateur :
-
-- Python 3
-- Mosquitto (Broker MQTT)
-
-## Utilisation sans passer par Docker
-
-Pour installer Paho (Client MQTT pour Python), utilisez la commande suivante :
-
-```
-pip install paho-mqtt
-```
-
-## Lancer le broker Mosquitto
-
-```
-mosquitto -p 1880
-```
 
 ## V1
 
@@ -52,6 +33,8 @@ Nous avons fait le choix de stopper la recherche de sources lumineuse des lors q
 
 Notre comportement final est donc celui d'un robot parcourant son environement tout en evitant les obstacles jusqu'a ce que celui ci decouvre une source lumineuse. Tel un papillion dans le noir, il se retrouve alors a tourner autour de celle ci a pour toujours.
 
+A noter que le fichier de coordination à été rendu générique pour pouvoir minimiser le nombre de choses à modifier en cas d'ajout d'un nouveau module de comportement. 
+
 # Examples
 
 ```python
@@ -71,7 +54,27 @@ braitengerg = [5.3,10] #Detection d'un obstacle
 light = [10,5]         #Detection de lumiere
 speed = [10,10]        #L'evitement de l'obstacle prend la priorité
 ```
+## Prérequis
+Avant de commencer à utiliser ce projet, veuillez vous assurer d'avoir installé les éléments suivants sur votre ordinateur :
+- Python 3
+- Mosquitto (Broker MQTT)
+- Paho (Client MQTT pour Python)
 
-## SCHEMA
+## Installation de Paho
+Pour installer Paho, utilisez la commande suivante :
 
-![alt text](https://github.com/Yann-Forner/tp4_webots/blob/main/schema.png?raw=true)
+```
+pip install paho-mqtt
+```
+
+## Lancer le broker Mosquitto
+
+```
+mosquitto -p 1880
+```
+
+## ARCHITECTURE
+
+On peut voir ci dessous le schéma de notre architecture, avec les différents topics par lequel passe nos données ainsi qu'un exemple de la donnée type qui va passer dedans. Il n'y a pas de différence entre les flèches bleues et rouges, à part que les rouges sont des messages issus de calculs et transporte l'information de la puissance à passer dans les roues. Alors que les flèches bleues signifient que l'on apporte les données brutes venant des capteurs. 
+
+![alt text](https://github.com/Yann-Forner/tp4_webots/blob/main/architecture.png?raw=true)
