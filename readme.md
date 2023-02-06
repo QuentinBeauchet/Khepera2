@@ -1,5 +1,26 @@
 # Installation
 
+## Prérequis
+
+Avant de commencer à utiliser ce projet, veuillez vous assurer d'avoir installé les éléments suivants sur votre ordinateur :
+
+- Python 3
+- Mosquitto (Broker MQTT)
+
+## Utilisation sans passer par Docker
+
+Pour installer Paho (Client MQTT pour Python), utilisez la commande suivante :
+
+```
+pip install paho-mqtt
+```
+
+## Lancer le broker Mosquitto
+
+```
+mosquitto -p 1880
+```
+
 ## V1
 
 ```c
@@ -50,25 +71,7 @@ braitengerg = [5.3,10] #Detection d'un obstacle
 light = [10,5]         #Detection de lumiere
 speed = [10,10]        #L'evitement de l'obstacle prend la priorité
 ```
-## Prérequis
-Avant de commencer à utiliser ce projet, veuillez vous assurer d'avoir installé les éléments suivants sur votre ordinateur :
-- Python 3
-- Mosquitto (Broker MQTT)
-- Paho (Client MQTT pour Python)
 
-## Installation de Paho
-Pour installer Paho, utilisez la commande suivante :
-
-```
-pip install paho-mqtt
-```
-
-## Lancer le broker Mosquitto
-
-```
-mosquitto -p 1880
-```
-
-## SCHEMA 
+## SCHEMA
 
 ![alt text](https://github.com/Yann-Forner/tp4_webots/blob/main/schema.png?raw=true)

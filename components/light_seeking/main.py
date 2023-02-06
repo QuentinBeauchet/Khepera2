@@ -1,5 +1,6 @@
 import paho.mqtt.client as mqtt
-import json 
+import json
+
 LIGHT_DETECTION_THRESHOLD = 700
 MAX_SPEED = 10
 
@@ -15,15 +16,17 @@ MATRIX = [
 ]
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
-    print("Light seeking :Connected with result code "+str(rc))
+    print("Light seeking :Connected with result code " + str(rc))
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
     client.subscribe("algo/light", qos=2)
 
+
 def on_message(client, userdata, msg):
-    #print(msg.payload)
+    # print(msg.payload)
     light_sensors = json.loads(msg.payload)
-    client.publish("res/light",str(follow_light(light_sensors)))
+    client.publish("res/light", str(follow_light(light_sensors)))
+
 
 client = mqtt.Client()
 client.on_connect = on_connect
@@ -50,6 +53,7 @@ def follow_light(light_sensors):
 
     return MATRIX[max_index]
 
+
 client.connect("localhost", 1880, 60)
 
 # Blocking call that processes network traffic, dispatches callbacks and
@@ -57,4 +61,3 @@ client.connect("localhost", 1880, 60)
 # Other loop*() functions are available that give a threaded interface and a
 # manual interface.
 client.loop_forever()
-
