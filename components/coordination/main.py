@@ -1,11 +1,12 @@
-'''
-
-if __name__ == "__main__":
-    print(coordination([100], [50]))
-'''
 import paho.mqtt.client as mqtt
-
+import json
 MAX_SPEED = 10
+
+
+last_speed = {
+    "res/light": [],
+    "res/dist": []
+}
 
 # Determine the correct speed for each motor based on the results of the other algorithms
 def coordination(dist, light):
@@ -16,10 +17,18 @@ def coordination(dist, light):
 
     return [x * weights[0] + y * weights[1] for x, y in zip(dist, light)]
 
+# Take the last value of each algorithm and process the coordination
+def coordination_controller(client,topic, speed):
+    last_speed[topic] = speed
+    if(last_speed["res/light"] != []  and last_speed["res/dist"] != []):
+        res = str(coordination( last_speed["res/dist"],last_speed["res/light"]))
+        client.publish("move",res)
+        last_speed["res/light"] = []
+        last_speed["res/dist"] = []
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
-    print("Connected with result code "+str(rc))
+    print("Coordination : Connected with result code "+str(rc))
 
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
@@ -31,14 +40,16 @@ def on_connect(client, userdata, flags, rc):
 
 # The callback for when a PUBLISH message is received from the server.
 def on_message(client, userdata, msg):
+    if ( b"nan" in msg.payload ):
+        return
     if (msg.topic == "sensors/light"):
         client.publish("algo/light",msg.payload)                   #publish
     elif (msg.topic == "sensors/dist"):
         client.publish("algo/dist",msg.payload)                    #publish
     elif (msg.topic == "res/light" or "res/dist" ):
-        # à insérer le code ici 
+        speed_array = json.loads(msg.payload)
+        coordination_controller(client, msg.topic, speed_array)
         #print(msg.topic + "  : -> " + str(msg.payload) )
-        client.publish("move",msg.payload)
 
 client = mqtt.Client()
 client.on_connect = on_connect

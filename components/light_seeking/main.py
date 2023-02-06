@@ -15,7 +15,7 @@ MATRIX = [
 ]
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
-    print("Connected with result code "+str(rc))
+    print("Light seeking :Connected with result code "+str(rc))
     # Subscribing in on_connect() means that if we lose the connection and
     # reconnect then subscriptions will be renewed.
     client.subscribe("algo/light", qos=2)
@@ -57,9 +57,4 @@ client.connect("localhost", 1880, 60)
 # Other loop*() functions are available that give a threaded interface and a
 # manual interface.
 client.loop_forever()
-
-'''
-if __name__ == "__main__":
-    print(follow_light([100]))
-'''
 

@@ -100,16 +100,10 @@ def get_light_infos():
     return (max_light, max_index, s)
 
 
-def get_light_values():
-    sensors_values = []
-    for i in range(len(light_sensors)):
-        sensors_values.append(light_sensors[i].getValue())
-    return sensors_values
-
-
 def publish_sensors():
     sensors_dist = [x.getValue() for x in initBraitengerg()]
-    client.publish("sensors/light",str(get_light_values()))                   #publish
+    sensors_light = [x.getValue() for x in light_sensors]
+    client.publish("sensors/light",str(sensors_light))                   #publish
     client.publish("sensors/dist",str(sensors_dist))                                #publish
 
 
