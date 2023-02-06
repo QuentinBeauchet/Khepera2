@@ -1,40 +1,15 @@
 import paho.mqtt.client as mqtt
 import json
 
-MAX_SPEED = 10
-SPEED_UNIT = 0.00053429
-DISTANCE_RANGE = 2000
-
-MATRIX = [
-    [-5000, -5000],
-    [-20000, 40000],
-    [-30000, 50000],
-    [-70000, 70000],
-    [70000, -60000],
-    [50000, -40000],
-    [40000, -20000],
-    [-5000, -5000],
-    [-10000, -10000],
-]
-
 
 # The callback for when the client receives a CONNACK response from the server.
 def on_connect(client, userdata, flags, rc):
-    print("Obstacle avoidance : Connected with result code " + str(rc))
-    # Subscribing in on_connect() means that if we lose the connection and
-    # reconnect then subscriptions will be renewed.
     client.subscribe("algo/dist", qos=2)
 
 
 def on_message(client, userdata, msg):
-    # print(msg.payload)
     dist_sensors = json.loads(msg.payload)
     client.publish("res/dist", str(braitengerg(dist_sensors)))
-
-
-client = mqtt.Client()
-client.on_connect = on_connect
-client.on_message = on_message
 
 
 def bound(x, a, b):
@@ -53,10 +28,33 @@ def braitengerg(sensors_values):
     return speed
 
 
-client.connect("localhost", 1880, 60)
+def initMQTT():
+    client = mqtt.Client()
+    client.on_connect = on_connect
+    client.on_message = on_message
 
-# Blocking call that processes network traffic, dispatches callbacks and
-# handles reconnecting.
-# Other loop*() functions are available that give a threaded interface and a
-# manual interface.
-client.loop_forever()
+    client.connect("localhost", 1880, 60)
+
+    client.loop_forever()
+
+    return client
+
+
+if __name__ == "__main__":
+    MAX_SPEED = 10
+    SPEED_UNIT = 0.00053429
+    DISTANCE_RANGE = 2000
+
+    MATRIX = [
+        [-5000, -5000],
+        [-20000, 40000],
+        [-30000, 50000],
+        [-70000, 70000],
+        [70000, -60000],
+        [50000, -40000],
+        [40000, -20000],
+        [-5000, -5000],
+        [-10000, -10000],
+    ]
+
+    client = initMQTT()

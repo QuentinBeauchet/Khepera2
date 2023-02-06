@@ -13,13 +13,6 @@ BROKER = "localhost"
 PORT = 1880
 
 
-def on_message(client, userdata, msg):
-    global speed
-    print("MSG=", msg)
-    speed = json.loads(msg.payload)
-    pass
-
-
 def initMotor():
     leftMotor = robot.getDevice("left wheel motor")
     rightMotor = robot.getDevice("right wheel motor")
@@ -52,7 +45,7 @@ def initLight():
 
 
 def initMQTT():
-    client = paho.Client("control1")  # create client object
+    client = paho.Client()  # create client object
     client.connect(BROKER, PORT)  # establish connection
     client.subscribe("move", qos=0)
     client.on_message = on_message
@@ -60,7 +53,6 @@ def initMQTT():
 
 
 def move():
-    print(speed)
     leftMotor.setVelocity(speed[0])
     rightMotor.setVelocity(speed[1])
 
@@ -68,8 +60,12 @@ def move():
 def publish_sensors():
     dist = [x.getValue() for x in dist_sensors]
     light = [x.getValue() for x in light_sensors]
-    print([light, dist])
-    client.publish("sensors", str([light, dist]))  # publish
+    client.publish("sensors", str([light, dist]))
+
+
+def on_message(client, userdata, msg):
+    global speed
+    speed = json.loads(msg.payload)
 
 
 if __name__ == "__main__":
@@ -82,5 +78,5 @@ if __name__ == "__main__":
 
     while robot.step(TIME_STEP) != -1:
         publish_sensors()
-        client.loop()
         move()
+        client.loop()
